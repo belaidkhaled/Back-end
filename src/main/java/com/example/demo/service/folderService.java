@@ -34,12 +34,8 @@ public class folderService {
 		return repo.findById(Id).get();
 	}
 	
-	public boolean delete(int Id) {
+	public void delete(int Id) {
 		 repo.deleteById(Id);
-		   Folder folder=repo.findById(Id).get();
-		   if(folder == null) {
-			   return true;
-		   }
-		   else return false;
+		   
 	}
 }

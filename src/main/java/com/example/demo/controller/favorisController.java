@@ -140,7 +140,7 @@ public class favorisController {
 			HttpStatus statusCode = HttpStatus.OK;
 			document response=null;
 			try {
-					response=servicedoc.get(Id);
+					response=service.get(Id);
 					service.delete(Id);
 			  
 			}

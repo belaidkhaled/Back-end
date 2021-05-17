@@ -24,6 +24,25 @@ public class Folder extends File {
 		@Column(name="maxSize")
 		public Long maxSize;
 		
+		public String path;
+		
+		public String categorie ;
+		
+		public String getCategorie() {
+			return categorie;
+		}
+
+		public void setCategorie(String categorie) {
+			this.categorie = categorie;
+		}
+
+		public String getPath() {
+			return path;
+		}
+
+		public void setPath(String path) {
+			this.path = path;
+		}
 		@OneToMany(mappedBy = "folder", fetch = FetchType.LAZY,
 	            cascade = CascadeType.ALL)
 	    private Set<document> documents;

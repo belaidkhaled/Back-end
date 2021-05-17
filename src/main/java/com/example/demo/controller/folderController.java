@@ -1,9 +1,12 @@
 package com.example.demo.controller;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.EntityNotFoundException;
+import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,9 +25,9 @@ import org.springframework.web.multipart.MultipartFile;
 import com.example.demo.data.dao.documentRepo;
 import com.example.demo.data.dao.folderRepo;
 import com.example.demo.data.entity.Folder;
-import com.example.demo.data.model.document;
 import com.example.demo.service.documentService;
 import com.example.demo.service.folderService;
+import com.example.demo.data.entity.document;
 
 @CrossOrigin
 @Controller
@@ -35,6 +38,9 @@ public class folderController {
 	
 	@Autowired
 	private folderRepo repo;
+	
+	@Autowired
+	private documentService servicedoc;
 	
 	
 	// CRUD documents
@@ -127,9 +133,30 @@ public class folderController {
 			method =  RequestMethod.DELETE)
 	   public ResponseEntity<Object>deleteFolder(@PathVariable Integer Id) {
 		HttpStatus statusCode = HttpStatus.OK;
-		boolean response = false;
+		List<Folder> response=null;
+		List<document> res=null;
+		List<Folder> myList = new ArrayList<>();
+		List<document> myListdoc = new ArrayList<>();
+		boolean resp = false;
+		int i1=0;
 		try {
-			response= service.delete(Id);;
+			service.delete(Id);
+			response=service.listAll();
+			res=servicedoc.listAll();
+			  for(int i=0;i<response.size();i++) {
+				   Folder dc=response.get(i);
+				   if (dc.getParentFolderId()== Id) {
+					  service.delete(dc.getId());
+					  }
+			  }
+			  for(int j=0;j<res.size();j++) {
+				   document dc1=res.get(j);
+				   if (dc1.getParentFolderId()== Id) {
+					   i1=dc1.getId();
+					   servicedoc.delete(i1);
+					   }
+			  }
+			   
 		}
 		catch(EntityNotFoundException e) {
 			statusCode=HttpStatus.GONE;
@@ -138,9 +165,12 @@ public class folderController {
 			e.printStackTrace();
 			statusCode=HttpStatus.INTERNAL_SERVER_ERROR;
 		}
-		return new ResponseEntity<>(response,statusCode);
+		return new ResponseEntity<>(i1,statusCode);
 	    
 	  }
+	
+	
+	
 	
 	
 	@RequestMapping(method=RequestMethod.GET,value="/fodlersParentsId/{Id}"
@@ -148,7 +178,6 @@ public class folderController {
 	public ResponseEntity<Object> getFolderParentId(@PathVariable Integer Id) {
 		HttpStatus statusCode = HttpStatus.OK;
 		List<Folder> response=null;
-		List<Folder> newresp [] ;
 		List<Folder> myList = new ArrayList<>();
 		try {
 		  response=service.listAll();
@@ -167,4 +196,115 @@ public class folderController {
 		return new ResponseEntity<>(myList,statusCode);
 	}
 	
+	
+	@RequestMapping(method=RequestMethod.GET,value="/FolderSearch/{value}"
+			,produces = "application/json")
+	public ResponseEntity<Object> getFolderLookingFor(@PathVariable String value) {
+		HttpStatus statusCode = HttpStatus.OK;
+		List<Folder> response=null;
+		Folder resp = null;
+		try {
+		  response=service.listAll();
+		  for(int i=0;i<response.size();i++) {
+			   Folder dc=response.get(i);
+			  if (dc.getName().equals(value) ) {
+				  resp=service.get(dc.getId());
+			   }
+		  }
+		} catch(EntityNotFoundException e) {
+			statusCode=HttpStatus.GONE;
+		} catch(Exception e) {
+			e.printStackTrace();
+			statusCode=HttpStatus.INTERNAL_SERVER_ERROR;
+		}
+		return new ResponseEntity<>(resp,statusCode);
+	}
+	
+	@RequestMapping(method=RequestMethod.GET,value="/FolderPathSearch/{id}"
+			,produces = "application/json")
+	public ResponseEntity<Object> getPathLookingFor(@PathVariable int id) {
+		HttpStatus statusCode = HttpStatus.OK;
+		Folder response = null;
+		List<Folder> resp=null;
+		List<String> arr =new ArrayList<>();
+		Folder dc = null;
+		String path = null;
+		try {
+			response=service.get(id);
+			arr.add(response.getName());
+			resp=service.listAll();
+			while(response.getParentFolderId() !=0) {
+			  for(int i=0;i<resp.size();i++) {
+				   dc=resp.get(i);
+				   if (response.getParentFolderId()== dc.getId()) {
+					   arr.add(dc.getName());
+					   response=service.get(dc.getId()); 
+				   }
+				 }
+			  }  
+			path=arr.get(arr.size()-1);
+			for(int i=arr.size()-2;i>=0;i--) {
+				path=path+"/"+ arr.get(i);
+			}
+			}
+		
+		catch(EntityNotFoundException e) {
+			statusCode=HttpStatus.GONE;
+		} catch(Exception e) {
+			e.printStackTrace();
+			statusCode=HttpStatus.INTERNAL_SERVER_ERROR;
+		}
+		return new ResponseEntity<>(path,statusCode);
+	}
+	
+	
+	@RequestMapping(method=RequestMethod.GET,value="/fodlersCategories/{categorie}"
+			,produces = "application/json")
+	public ResponseEntity<Object> getFoldersCategories(@PathVariable String categorie) throws UnsupportedEncodingException {
+		HttpStatus statusCode = HttpStatus.OK;
+		List<Folder> response=null;
+		List<Folder> myList = new ArrayList<>();
+		String decoded = URLDecoder.decode(categorie, "UTF-8");
+		try {
+		  response=service.listAll();
+		  for(int i=0;i<response.size();i++) {
+			   Folder dc=response.get(i);
+			   if( dc.getCategorie() != null) {
+			   if (dc.getCategorie().equals(decoded)) {
+				   myList.add(dc);
+			   }}
+		  }
+		} catch(EntityNotFoundException e) {
+			statusCode=HttpStatus.GONE;
+		} catch(Exception e) {
+			e.printStackTrace();
+			statusCode=HttpStatus.INTERNAL_SERVER_ERROR;
+		}
+		return new ResponseEntity<>(myList,statusCode);
+	}
+	
+	
+	@RequestMapping(method=RequestMethod.GET,value="/foldersHead"
+			,produces = "application/json")
+	public ResponseEntity<Object> getFolderHead() {
+		HttpStatus statusCode = HttpStatus.OK;
+		List<Folder> response=null;
+		List<Folder> myList = new ArrayList<>();
+		try {
+		  response=service.listAll();
+		  for(int i=0;i<response.size();i++) {
+			   Folder dc=response.get(i);
+			   if (dc.getParentFolderId()== 0) {
+				   myList.add(dc);
+				  
+			   }
+		  }
+		} catch(EntityNotFoundException e) {
+			statusCode=HttpStatus.GONE;
+		} catch(Exception e) {
+			e.printStackTrace();
+			statusCode=HttpStatus.INTERNAL_SERVER_ERROR;
+		}
+		return new ResponseEntity<>(myList,statusCode);
+	}
 }

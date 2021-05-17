@@ -44,8 +44,6 @@ public class document extends File {
 	@Column(name = "url")
 	public String url;
 	
-	
-
 	public String getNewUrl() {
 		return url;
 	}

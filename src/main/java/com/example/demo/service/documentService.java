@@ -50,13 +50,9 @@ public class documentService {
 		return repo.findById(Id).get();
 	}
 	
-	public boolean delete(int Id) {
+	public void delete(int Id) {
 	   repo.deleteById(Id);
-	   document doc=repo.findById(Id).get();
-	   if(doc == null) {
-		   return true;
-	   }
-	   else return false;
+	   
 	}
 	
 	

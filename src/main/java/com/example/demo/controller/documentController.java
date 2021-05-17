@@ -37,6 +37,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.example.demo.data.dao.documentHistoryRepo;
 import com.example.demo.data.dao.documentRepo;
+import com.example.demo.data.entity.Favoris;
+import com.example.demo.data.entity.Folder;
 import com.example.demo.data.entity.document;
 import com.example.demo.data.entity.documentHistory;
 import com.example.demo.service.documentHistoryService;
@@ -249,7 +251,7 @@ public class documentController  {
 		HttpStatus statusCode = HttpStatus.OK;
 		boolean response = false;
 		try {
-			response= service.delete(Id);
+			 service.delete(Id);
 		}
 		catch(EntityNotFoundException e) {
 			statusCode=HttpStatus.GONE;
@@ -284,7 +286,7 @@ public class documentController  {
 		  response=service.listAll();
 		  for(int i=0;i<response.size();i++) {
 			   document dc=response.get(i);
-			   if (dc.getParentFolderId()== Id) {
+			   if ((dc.getParentFolderId()== Id) && !(dc instanceof documentHistory) && !(dc instanceof Favoris)) {
 				   myList.add(dc);
 			   }
 		  }
@@ -325,10 +327,7 @@ public class documentController  {
 		document resp=null;
 		try {
 			resp=service.get(Id);
-		
 			FileUtils.writeByteArrayToFile(new File("/back-end-GED/uploads"), resp.getData());
-			
-			
 		   } 
 		catch(EntityNotFoundException e) {
 				statusCode=HttpStatus.GONE;
@@ -341,7 +340,32 @@ public class documentController  {
 		return new ResponseEntity<>(resp,statusCode);  		
 	}
 	
-	
+	@RequestMapping(method=RequestMethod.GET,value="/documentSearch/{value}"
+			,produces = "application/json")
+	public ResponseEntity<Object> getFolderLookingFor(@PathVariable String value) {
+		HttpStatus statusCode = HttpStatus.OK;
+		List<document> response=null;
+		document resp = null;
+		List<document> myList = new ArrayList<>();
+		try {
+		  response=service.listAll();
+		  for(int i=0;i<response.size();i++) {
+			   document dc=response.get(i);
+			   if(dc.getSubject() != null) {
+			  if (dc.getSubject().equals(value) ) {
+				  resp=service.get(dc.getId());
+				  myList.add(resp);
+				  break;
+			   }
+		  }}
+		} catch(EntityNotFoundException e) {
+			statusCode=HttpStatus.GONE;
+		} catch(Exception e) {
+			e.printStackTrace();
+			statusCode=HttpStatus.INTERNAL_SERVER_ERROR;
+		}
+		return new ResponseEntity<>(myList,statusCode);
+	}
 	
 	
 	

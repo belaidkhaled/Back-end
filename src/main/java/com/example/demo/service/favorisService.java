@@ -27,13 +27,9 @@ public class favorisService {
 		return repo.findById(Id).get();
 	}
 	
-	public boolean delete(int Id) {
+	public void delete(int Id) {
 	   repo.deleteById(Id);
-	   Favoris favoris=repo.findById(Id).get();
-	   if(favoris == null) {
-		   return true;
-	   }
-	   else return false;
+	   
 	}
 	
 }
