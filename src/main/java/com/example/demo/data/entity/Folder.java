@@ -43,6 +43,7 @@ public class Folder extends File {
 		public void setPath(String path) {
 			this.path = path;
 		}
+		
 		@OneToMany(mappedBy = "folder", fetch = FetchType.LAZY,
 	            cascade = CascadeType.ALL)
 	    private Set<document> documents;

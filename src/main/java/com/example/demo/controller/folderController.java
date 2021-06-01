@@ -203,12 +203,15 @@ public class folderController {
 		HttpStatus statusCode = HttpStatus.OK;
 		List<Folder> response=null;
 		Folder resp = null;
+		List<Folder> myList = new ArrayList<>();
 		try {
 		  response=service.listAll();
 		  for(int i=0;i<response.size();i++) {
 			   Folder dc=response.get(i);
 			  if (dc.getName().equals(value) ) {
 				  resp=service.get(dc.getId());
+				  myList.add(resp);
+				  break;
 			   }
 		  }
 		} catch(EntityNotFoundException e) {
@@ -217,7 +220,7 @@ public class folderController {
 			e.printStackTrace();
 			statusCode=HttpStatus.INTERNAL_SERVER_ERROR;
 		}
-		return new ResponseEntity<>(resp,statusCode);
+		return new ResponseEntity<>(myList,statusCode);
 	}
 	
 	@RequestMapping(method=RequestMethod.GET,value="/FolderPathSearch/{id}"

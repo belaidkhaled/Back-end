@@ -1,8 +1,11 @@
 package com.example.demo.data.entity;
 
+import javax.persistence.CascadeType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -28,7 +31,12 @@ public class File {
 	public String size;
 	
 	
+	
+	
+	
 	public int parentFolderId;
+	
+	
 	
 	
 	protected File() {

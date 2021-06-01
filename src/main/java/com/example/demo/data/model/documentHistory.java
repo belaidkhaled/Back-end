@@ -5,6 +5,16 @@ import java.util.Arrays;
 public class documentHistory extends document {
 	
 	public int  version;
+	
+	public int  originalId;
+
+	public int getOriginalId() {
+		return originalId;
+	}
+
+	public void setOriginalId(int originalId) {
+		this.originalId = originalId;
+	}
 
 	public int getVersion() {
 		return version;

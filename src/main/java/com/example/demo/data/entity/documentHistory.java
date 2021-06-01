@@ -17,7 +17,10 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 public class documentHistory extends document {
 	
 	@Column(name = "version")
-	public int  version;
+	public int version;
+	
+	@Column(name = "originalId")
+	public int  originalId;
 
 	public int getVersion() {
 		return version;
@@ -27,41 +30,12 @@ public class documentHistory extends document {
 		this.version = version;
 	}
 
-	public documentHistory() {
-		super();
-		// TODO Auto-generated constructor stub
+	public int getOriginalId() {
+		return originalId;
 	}
 
-	public documentHistory(String name, String creationDate, String description, String size, int parentFolderId,
-			int Id, String subject, String format, String title, byte[] data, String UpdatedDate) {
-		super(name, creationDate, description, size, parentFolderId, Id, subject, format, title, data, UpdatedDate);
-		// TODO Auto-generated constructor stub
-	}
-
-	public documentHistory(String name, String creationDate, String description, String size, int parentFolderId,
-			int Id) {
-		super(name, creationDate, description, size, parentFolderId, Id);
-		// TODO Auto-generated constructor stub
-	}
-
-	public documentHistory(String name, String creationDate, String description, String size, int parentFolderId,
-			int Id, int version) {
-		super(name, creationDate, description, size, parentFolderId, Id);
-		this.version = version;
-	}
-
-	@Override
-	public String toString() {
-		return "documentHistory [version=" + version + ", subject=" + subject + ", format=" + format + ", title="
-				+ title + ", path=" + path + ", UpdatedDate=" + UpdatedDate + ", Id=" + id + ", name=" + name
-				+ ", creationDate=" + creationDate + ", description=" + description + ", size=" + size
-				+ ", parentFolderId=" + parentFolderId + ", getVersion()=" + getVersion() + ", getUpdatedDate()="
-				+ getUpdatedDate() + ", getPath()=" + getPath() + ", getData()=" + Arrays.toString(getData())
-				+ ", getSubject()=" + getSubject() + ", getFormat()=" + getFormat() + ", getTitle()=" + getTitle()
-				+ ", toString()=" + super.toString() + ", getName()=" + getName() + ", getCreationDate()="
-				+ getCreationDate() + ", getDescription()=" + getDescription() + ", getSize()=" + getSize()
-				+ ", getParentFolderId()=" + getParentFolderId() + ", getId()=" + getId() + ", getClass()=" + getClass()
-				+ ", hashCode()=" + hashCode() + "]";
+	public void setOriginalId(int originalId) {
+		this.originalId = originalId;
 	}
 	
 	

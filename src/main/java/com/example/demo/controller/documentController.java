@@ -19,6 +19,7 @@ import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
+import org.springframework.data.jdbc.repository.query.Query;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -100,10 +101,21 @@ public class documentController  {
 				statusCode=HttpStatus.INTERNAL_SERVER_ERROR;
 		}
                                            
-        byte[] bytes = resp.getData();            
+        byte[] bytes = resp.getData();     
+        String form=resp.getFormat() ;
+        String path=resp.getPath();
+        String val="pdf";
+        String format=null;
+        String val1="xlsx";
+        if(path.contains(val)) {
+        	format="pdf";
+        }
+        if(path.contains(val1)) {
+        	format="xlsx";
+        }
         InputStreamResource resource = new InputStreamResource(new ByteArrayInputStream(bytes));
         HttpHeaders headers = new HttpHeaders();
-        headers.set("Content-Disposition", String.format("attachment; filename=your_file_name"));    
+        headers.set("Content-Disposition", String.format("attachment; filename=your_file_name"+"."+ format));    
         return ResponseEntity.ok()
                 .headers(headers)
                 .contentLength(bytes.length)
@@ -132,7 +144,7 @@ public class documentController  {
 	}
 	
 	
-	@RequestMapping(method= {RequestMethod.POST} ,value="/documents",
+	@RequestMapping(method= {RequestMethod.POST} ,value="/workflow",
 			consumes= {MediaType.APPLICATION_JSON_VALUE,MediaType.MULTIPART_FORM_DATA_VALUE},
 			produces = {"application/json","application/pdf"})
 	public ResponseEntity<Object> createDocument(@RequestPart("document") String doc,
@@ -162,42 +174,61 @@ public class documentController  {
 	        @RequestPart(name= "file" ,required = false)  MultipartFile  file ) throws JsonMappingException, JsonProcessingException
 	{
 		HttpStatus statusCode = HttpStatus.OK;
-		document response=null;
+		int k=0;
 		document resp;
 		documentHistory dhc = null;
 		resp=service.get(Id);
-		boolean exist=dhrepo.findById(Id).isEmpty();
-		if( exist) {
-			int version =1;
-			documentHistory dh=new documentHistory();
-			dh.setData(resp.getData());
-			dh.setCreationDate(resp.getCreationDate());
-			dh.setDescription(resp.getDescription());
-			dh.setFormat(resp.getFormat());
-			dh.setPath(resp.getPath());
-			dh.setVersion(version);
-			dh.setName(resp.getName());
-			dh.setSize(resp.getSize());
-			dh.setTitle(resp.getTitle());
-			dh.setSubject(resp.getSubject());
-			dh.setParentFolderId(resp.getParentFolderId());
+		List<documentHistory> response=null;
+		List<documentHistory> myList=new ArrayList<>();
+		int p=0;
+		boolean tr = false;
+	    try {
+		response=historyService.listAll();
+		for(int i=0;i<response.size();i++) {
+			documentHistory dc=response.get(i);
+			p=dc.getOriginalId();
+				if (dc.getOriginalId()== Id){
+					myList.add(dc);
+							}
+					}
+			for(int j=0; j<myList.size();j++) {
+				if ((myList.get(j).getVersion()) > k) {
+				k=myList.get(j).getVersion();
+					}
+				}
 			
-			dhrepo.save(dh); 
-		}
-		else {
-			int version =dhc.getVersion();
-			documentHistory dh=new documentHistory();
-			dh.setData(resp.getData());
-			dh.setCreationDate(resp.getCreationDate());
-			dh.setDescription(resp.getDescription());
-			dh.setFormat(resp.getFormat());
-			dh.setPath(resp.getPath());
-			dh.setVersion(version+1);
-			dhrepo.save(dh); 
-		}
-		
-		
-			 try {
+			if( k==0) {
+						documentHistory dh=new documentHistory();
+						dh.setData(resp.getData());
+						dh.setCreationDate(resp.getCreationDate());
+						dh.setDescription(resp.getDescription());
+						dh.setFormat(resp.getFormat());
+						dh.setPath(resp.getPath());
+						dh.setVersion(1);
+						dh.setName(resp.getName());
+						dh.setSize(resp.getSize());
+						dh.setTitle(resp.getTitle());
+						dh.setSubject(resp.getSubject());
+						dh.setParentFolderId(resp.getParentFolderId());
+						dh.setOriginalId(Id);
+						dhrepo.save(dh); 
+					}
+					else {
+						documentHistory dh=new documentHistory();
+						dh.setData(resp.getData());
+						dh.setName(resp.getName());
+						dh.setCreationDate(resp.getCreationDate());
+						dh.setDescription(resp.getDescription());
+						dh.setFormat(resp.getFormat());
+						dh.setPath(resp.getPath());
+						dh.setVersion(k+1);
+						dh.setOriginalId(Id);
+						dh.setParentFolderId(resp.getParentFolderId());
+						dh.setSize(resp.getSize());
+						dh.setTitle(resp.getTitle());
+						dh.setSubject(resp.getSubject());
+						dhrepo.save(dh); 
+					}
 		     repo.findById(Id)
 		           .map(document -> {
 		        	document docJson=new document();
@@ -234,6 +265,7 @@ public class documentController  {
 		           return repo.save(d);
 		           });
 			}
+			
 			 catch(EntityNotFoundException e) {
 				 statusCode=HttpStatus.GONE;
 			 }
