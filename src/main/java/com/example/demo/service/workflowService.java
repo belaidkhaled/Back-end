@@ -16,6 +16,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.example.demo.data.dao.workflowDocRepo;
+import com.example.demo.data.entity.document;
 import com.example.demo.data.entity.workflowDoc;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -81,4 +82,37 @@ public class workflowService {
 	   fos.close(); 
 	   return convFile;
 	 }
+	 
+	 
+	 public workflowDoc Filldata(workflowDoc doc,MultipartFile file) {
+		 File f = null;
+			try {
+				f = convert(file);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			   String path=f.getAbsolutePath();
+			   doc.setPath(path);
+				String name = StringUtils.cleanPath(file.getOriginalFilename());
+				doc.setFormat(file.getContentType());
+				doc.setName(name);
+				try {
+					doc.setData(file.getBytes());
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				try {
+					doc.setSize(FileUtils.byteCountToDisplaySize((long) file.getBytes().length));
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+				Calendar cal = Calendar.getInstance();
+				doc.setCreationDate(dateFormat.format(cal.getTime()));
+				return doc;
+	 }
+	
 }

@@ -144,7 +144,7 @@ public class documentController  {
 	}
 	
 	
-	@RequestMapping(method= {RequestMethod.POST} ,value="/workflow",
+	@RequestMapping(method= {RequestMethod.POST} ,value="/documents",
 			consumes= {MediaType.APPLICATION_JSON_VALUE,MediaType.MULTIPART_FORM_DATA_VALUE},
 			produces = {"application/json","application/pdf"})
 	public ResponseEntity<Object> createDocument(@RequestPart("document") String doc,

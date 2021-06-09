@@ -35,10 +35,55 @@ public class workflowDoc extends document {
 	@Column(name = "workflowMembers")
 	public String workflowMembers;
 	
+	@Column(name = "comment")
+	public String comment;
+	
+	@Column(name = "trackValidation")
+	public Integer trackValidation ;
+	
+	@Column(name = "trackArray")
+	public int[] trackArray;
+	
+	public int[] getTrackArray() {
+		return trackArray;
+	}
+
+	public void setTrackArray(int[] trackArray) {
+		this.trackArray = trackArray;
+	}
+
+	public Integer getTrackValidation() {
+		return trackValidation;
+	}
+
+	public void setTrackValidation(Integer trackValidation) {
+		this.trackValidation = trackValidation;
+	}
+
+	public String getComment() {
+		return comment;
+	}
+	
+	@Column(name = "hierarchy")
+	public String hierarchy;
+
+	public String getHierarchy() {
+		return hierarchy;
+	}
+
+	public void setHierarchy(String hierarchy) {
+		this.hierarchy = hierarchy;
+	}
+
+	public void setComment(String comment) {
+		this.comment = comment;
+	}
+
 	@Override
 	public String toString() {
 		return "workflowDoc [workflowMembers=" + workflowMembers + ", category="
-				+ category + ", subject=" + subject + ", format=" + format + ", title=" + title
+				+ category +  ", comment=" + trackArray +  ", trackArray=" 
+						+ comment + hierarchy +  ", hierarchy="+ ", subject=" + subject + ", format=" + format + ", title=" + title
 				+ ", path=" + path + ", UpdatedDate=" + UpdatedDate + ", url=" + url + ", id=" + id + ", name=" + name
 				+ ", creationDate=" + creationDate + ", description=" + description + ", size=" + size
 				+ ", parentFolderId=" + parentFolderId + ", getWorkflowMembers()="
