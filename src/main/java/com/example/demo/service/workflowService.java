@@ -114,5 +114,37 @@ public class workflowService {
 				doc.setCreationDate(dateFormat.format(cal.getTime()));
 				return doc;
 	 }
+	 
+	 
+	 public workflowDoc FilldataWithoutFile(workflowDoc doc,MultipartFile file) {
+		 File f = null;
+			try {
+				f = convert(file);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			   String path=f.getAbsolutePath();
+			   doc.setPath(path);
+				String name = StringUtils.cleanPath(file.getOriginalFilename());
+				doc.setFormat(file.getContentType());
+				doc.setName(name);
+				try {
+					doc.setData(file.getBytes());
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				try {
+					doc.setSize(FileUtils.byteCountToDisplaySize((long) file.getBytes().length));
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+				Calendar cal = Calendar.getInstance();
+				doc.setCreationDate(dateFormat.format(cal.getTime()));
+				return doc;
+	 }
 	
 }

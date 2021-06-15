@@ -25,9 +25,11 @@ import org.springframework.web.multipart.MultipartFile;
 import com.example.demo.data.dao.documentRepo;
 import com.example.demo.data.dao.folderRepo;
 import com.example.demo.data.entity.Folder;
+import com.example.demo.data.entity.currentUser;
 import com.example.demo.service.documentService;
 import com.example.demo.service.folderService;
 import com.example.demo.data.entity.document;
+import com.example.demo.data.entity.user;
 
 @CrossOrigin
 @Controller
@@ -204,16 +206,24 @@ public class folderController {
 		List<Folder> response=null;
 		Folder resp = null;
 		List<Folder> myList = new ArrayList<>();
+		String[] parts = value.split("-");
+		String search=null;
+		String user=null;
+		String tr=null;
+		search=parts[0];
+		user=parts[1].replaceAll("\\s", "");
 		try {
 		  response=service.listAll();
 		  for(int i=0;i<response.size();i++) {
 			   Folder dc=response.get(i);
-			  if (dc.getName().equals(value) ) {
+			   if(dc.getUserName() != null) {
+				  tr= dc.getUserName().replaceAll("\\s", "");
+			  if (dc.getName().equals(search) && tr.equals(user)) {
 				  resp=service.get(dc.getId());
 				  myList.add(resp);
 				  break;
 			   }
-		  }
+		  }}
 		} catch(EntityNotFoundException e) {
 			statusCode=HttpStatus.GONE;
 		} catch(Exception e) {
@@ -287,21 +297,28 @@ public class folderController {
 	}
 	
 	
-	@RequestMapping(method=RequestMethod.GET,value="/foldersHead"
+	@RequestMapping(method=RequestMethod.GET,value="/foldersHead/{user}"
 			,produces = "application/json")
-	public ResponseEntity<Object> getFolderHead() {
+	public ResponseEntity<Object> getFolderHead(@PathVariable String user) throws UnsupportedEncodingException  {
 		HttpStatus statusCode = HttpStatus.OK;
 		List<Folder> response=null;
 		List<Folder> myList = new ArrayList<>();
+		String test1 =null ;
+		String test2=null;
+		String decoded = URLDecoder.decode(user, "UTF-8");
 		try {
 		  response=service.listAll();
 		  for(int i=0;i<response.size();i++) {
 			   Folder dc=response.get(i);
-			   if (dc.getParentFolderId()== 0) {
-				   myList.add(dc);
-				  
-			   }
+			   if(dc.getUserName() != null ) {
+				  test1= dc.getUserName().replaceAll("\\s", "");
+				  test2=decoded.replaceAll("\\s", "");
+				  if(test1.equals(test2) && dc.getParentFolderId() ==0) {
+					  myList.add(dc);
+				  }
+		  
 		  }
+			   }
 		} catch(EntityNotFoundException e) {
 			statusCode=HttpStatus.GONE;
 		} catch(Exception e) {

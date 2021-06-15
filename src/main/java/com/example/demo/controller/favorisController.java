@@ -1,6 +1,7 @@
 package com.example.demo.controller;
 
 import java.io.ByteArrayInputStream;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.EntityNotFoundException;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.data.dao.favorisRepo;
 import com.example.demo.data.entity.Favoris;
+import com.example.demo.data.entity.Folder;
 import com.example.demo.data.entity.document;
 import com.example.demo.service.documentService;
 import com.example.demo.service.favorisService;
@@ -121,6 +123,7 @@ public class favorisController {
 				fav.setSize(doc.getSize());
 				fav.setSubject(doc.getSubject());
 				fav.setTitle(doc.getTitle());
+				fav.setUserName(doc.getUserName());
 				response=service.save(fav);
 		
 			}
@@ -153,5 +156,34 @@ public class favorisController {
 			}
 			return new ResponseEntity<>(response,statusCode);
 		    
-		  }  
+		  } 
+		
+		@RequestMapping(method=RequestMethod.GET,value="/favorisForUser/{value}"
+				,produces = "application/json")
+		public ResponseEntity<Object> getFavorisForThisUser(@PathVariable String value) {
+			HttpStatus statusCode = HttpStatus.OK;
+			List<Favoris> response=null;
+			List<Favoris> myList = new ArrayList<>();
+			String tr=null;
+			String tr1=null;
+			tr1=value.replaceAll("\\s", "");
+			try {
+				 response= service.listAll();
+				for(int i=0;i<response.size();i++) {
+					Favoris dc=response.get(i);
+					if(dc.getUserName() != null) {
+						tr= dc.getUserName().replaceAll("\\s", "");
+						if(tr.equals(tr1)) {
+							myList.add(dc);
+						}
+					}
+				}
+			} catch(EntityNotFoundException e) {
+				statusCode=HttpStatus.GONE;
+			} catch(Exception e) {
+				e.printStackTrace();
+				statusCode=HttpStatus.INTERNAL_SERVER_ERROR;
+			}
+			return new ResponseEntity<>(myList,statusCode);
+		}
 }

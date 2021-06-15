@@ -21,6 +21,9 @@ public class documentHistory extends document {
 	
 	@Column(name = "originalId")
 	public int  originalId;
+	
+	@Column(name="userName")
+	public String userName ;
 
 	public int getVersion() {
 		return version;
@@ -32,6 +35,16 @@ public class documentHistory extends document {
 
 	public int getOriginalId() {
 		return originalId;
+	}
+	
+	
+	
+	public String getUserName() {
+		return userName;
+	}
+
+	public void setUserName(String userName) {
+		this.userName = userName;
 	}
 
 	public void setOriginalId(int originalId) {

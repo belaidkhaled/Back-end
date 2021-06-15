@@ -17,8 +17,9 @@ public class Folder extends File {
 		protected Folder() {
 		}
 
-		public Folder(String name, String creationDate, String description, String size, int parentFolderId, int Id) {
+		public Folder(String name, String creationDate, String description, String size, int parentFolderId, int Id,String userName) {
 			super(name, creationDate, description, size, parentFolderId, Id);
+			this.userName=userName;
 			// TODO Auto-generated constructor stub
 		}
 		@Column(name="maxSize")
@@ -28,6 +29,17 @@ public class Folder extends File {
 		
 		public String categorie ;
 		
+		@Column(name="userName")
+		public String userName ;
+		
+		public String getUserName() {
+			return userName;
+		}
+
+		public void setUserName(String userName) {
+			this.userName = userName;
+		}
+
 		public String getCategorie() {
 			return categorie;
 		}

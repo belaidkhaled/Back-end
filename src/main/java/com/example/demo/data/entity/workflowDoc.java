@@ -32,12 +32,78 @@ public class workflowDoc extends document {
 		// TODO Auto-generated constructor stub
 	}
 
+	@Column(name="userName")
+	public String userName ;
+	
+	public String getUserName() {
+		return userName;
+	}
+
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
+
 	@Column(name = "workflowMembers")
 	public String workflowMembers;
 	
 	@Column(name = "comment")
 	public String comment;
 	
+	@Column(name = "commentL1")
+	public String commentL1;
+	
+	@Column(name = "commentL2")
+	public String commentL2;
+	
+	@Column(name = "commentL3")
+	public String commentL3;
+	
+	@Column(name = "commentL4")
+	public String commentL4;
+	
+	@Column(name = "commentL5")
+	public String commentL5;
+	
+	public String getCommentL1() {
+		return commentL1;
+	}
+
+	public void setCommentL1(String commentL1) {
+		this.commentL1 = commentL1;
+	}
+
+	public String getCommentL2() {
+		return commentL2;
+	}
+
+	public void setCommentL2(String commentL2) {
+		this.commentL2 = commentL2;
+	}
+
+	public String getCommentL3() {
+		return commentL3;
+	}
+
+	public void setCommentL3(String commentL3) {
+		this.commentL3 = commentL3;
+	}
+
+	public String getCommentL4() {
+		return commentL4;
+	}
+
+	public void setCommentL4(String commentL4) {
+		this.commentL4 = commentL4;
+	}
+
+	public String getCommentL5() {
+		return commentL5;
+	}
+
+	public void setCommentL5(String commentL5) {
+		this.commentL5 = commentL5;
+	}
+
 	@Column(name = "trackValidation")
 	public Integer trackValidation ;
 	

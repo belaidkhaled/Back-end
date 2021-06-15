@@ -37,6 +37,18 @@ public class document extends File {
 	@Column(name = "Path")
 	public String  path;
 	
+	@Column(name="userName")
+	public String userName ;
+	
+	public String getUserName() {
+		return userName;
+	}
+
+
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
+
 	@Column(name = "UpdatedDate")
 	public String  UpdatedDate;
 	
@@ -127,6 +139,7 @@ public class document extends File {
 		this.title = title;
 		this.data=data;	
 		this.UpdatedDate=UpdatedDate;
+		
 	}
    
 	public document() {

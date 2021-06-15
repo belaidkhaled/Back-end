@@ -24,6 +24,7 @@ import com.example.demo.data.entity.Folder;
 import com.example.demo.data.entity.document;
 import com.example.demo.data.entity.documentHistory;
 import com.example.demo.data.entity.trackArray;
+import com.example.demo.data.entity.workflowData;
 import com.example.demo.data.entity.workflowDoc;
 import com.example.demo.service.workflowService;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -101,7 +102,7 @@ public class workflowController {
 	}
 	
 	
-	@RequestMapping(method=RequestMethod.GET,value="/workflowTrack/{Id}"
+	@RequestMapping(method=RequestMethod.PUT,value="/workflowTrack/{Id}"
 			,produces="application/json")
 	public ResponseEntity<Object> getWorkflowTrackById(@PathVariable Integer Id) {
 		HttpStatus statusCode = HttpStatus.OK;
@@ -287,6 +288,69 @@ public class workflowController {
 		return new ResponseEntity<>(response,statusCode);
 	  }
 	
+	
+	@RequestMapping(method=RequestMethod.PUT,value="/workflowTrackMinus/{Id}"
+			,produces="application/json")
+	public ResponseEntity<Object> updateMinusTrackValidation(@PathVariable Integer Id) {
+		HttpStatus statusCode = HttpStatus.OK;
+		workflowDoc response=null;
+		try {
+			response=service.get(Id);
+			if(response.trackValidation ==null) {
+				response.trackValidation=0;
+				response.trackValidation=response.trackValidation + 1;
+			}
+			else {
+				response.trackValidation=response.trackValidation - 1;
+			}
+			service.save(response);
+		   } 
+		catch(EntityNotFoundException e) {
+				statusCode=HttpStatus.GONE;
+		} 
+		catch(Exception e) {
+				e.printStackTrace();
+				statusCode=HttpStatus.INTERNAL_SERVER_ERROR;
+		}
+		return new ResponseEntity<>(response,statusCode);
+	}
+	
+	
+
+	@RequestMapping(method=RequestMethod.PUT,value="/AddComment/{Id}"
+			,produces="application/json")
+	public ResponseEntity<Object> AddComment(@PathVariable Integer Id,
+			@RequestBody workflowData wd) {
+		HttpStatus statusCode = HttpStatus.OK;
+		workflowDoc response=null;
+		try {
+			response=service.get(Id);
+			if(wd.level.equals("1")) {
+				response.setCommentL1(wd.comment);
+			}
+			if(wd.level.equals("2")) {
+				response.setCommentL2(wd.comment);
+			}
+			if(wd.level.equals("3")) {
+				response.setCommentL3(wd.comment);
+			}
+			if(wd.level.equals("4")) {
+				response.setCommentL4(wd.comment);
+			}
+			if(wd.level.equals("5")) {
+				response.setCommentL5(wd.comment);
+			}
+			service.save(response);
+		   } 
+		catch(EntityNotFoundException e) {
+				statusCode=HttpStatus.GONE;
+		} 
+		catch(Exception e) {
+				e.printStackTrace();
+				statusCode=HttpStatus.INTERNAL_SERVER_ERROR;
+		}
+		return new ResponseEntity<>(response,statusCode);
+	}
 
 		
 }

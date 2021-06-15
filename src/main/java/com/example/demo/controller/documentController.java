@@ -211,6 +211,7 @@ public class documentController  {
 						dh.setSubject(resp.getSubject());
 						dh.setParentFolderId(resp.getParentFolderId());
 						dh.setOriginalId(Id);
+						dh.setUserName(resp.getUserName());
 						dhrepo.save(dh); 
 					}
 					else {
@@ -227,6 +228,7 @@ public class documentController  {
 						dh.setSize(resp.getSize());
 						dh.setTitle(resp.getTitle());
 						dh.setSubject(resp.getSubject());
+						dh.setUserName(resp.getUserName());
 						dhrepo.save(dh); 
 					}
 		     repo.findById(Id)
@@ -374,21 +376,34 @@ public class documentController  {
 	
 	@RequestMapping(method=RequestMethod.GET,value="/documentSearch/{value}"
 			,produces = "application/json")
-	public ResponseEntity<Object> getFolderLookingFor(@PathVariable String value) {
+	public ResponseEntity<Object> getDocumentLookingFor(@PathVariable String value) {
 		HttpStatus statusCode = HttpStatus.OK;
 		List<document> response=null;
 		document resp = null;
 		List<document> myList = new ArrayList<>();
+		String[] parts = value.split("-");
+		String search=null;
+		String user=null;
+		String tr=null;
+		String tr1=null;
+		String[] parts1=null;
+		search=parts[0];
+		user=parts[1].replaceAll("\\s", "");
+		int k=0;
 		try {
 		  response=service.listAll();
 		  for(int i=0;i<response.size();i++) {
 			   document dc=response.get(i);
-			   if(dc.getSubject() != null) {
-			  if (dc.getSubject().equals(value) ) {
+			   if(dc.getUserName() != null)  {
+				   parts1=dc.getName().split(".");
+				   tr= dc.getUserName().replaceAll("\\s", "");
+			  if (tr.equals(user) && dc.getName().contains(search) ) {
 				  resp=service.get(dc.getId());
 				  myList.add(resp);
 				  break;
+			
 			   }
+			   
 		  }}
 		} catch(EntityNotFoundException e) {
 			statusCode=HttpStatus.GONE;

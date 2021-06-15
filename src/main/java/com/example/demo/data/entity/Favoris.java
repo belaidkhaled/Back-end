@@ -2,6 +2,7 @@ package com.example.demo.data.entity;
 
 import java.util.Arrays;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
@@ -15,6 +16,17 @@ public class Favoris extends document {
 	public Favoris() {
 		super();
 		// TODO Auto-generated constructor stub
+	}
+	
+	@Column(name="userName")
+	public String userName ;
+
+	public String getUserName() {
+		return userName;
+	}
+
+	public void setUserName(String userName) {
+		this.userName = userName;
 	}
 
 	public Favoris(String name, String creationDate, String description, String size, int parentFolderId, int Id,
