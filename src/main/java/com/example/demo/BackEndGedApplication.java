@@ -28,7 +28,7 @@ public abstract class BackEndGedApplication   {
     public void CommandLineRunnerBean() {
 			List<user> response=null;
 			response = service.listAll();
-			service.setIndex(7);
+			service.setIndex(5);
 			
 	}
 }

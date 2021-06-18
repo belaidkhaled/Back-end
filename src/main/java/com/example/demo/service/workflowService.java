@@ -44,7 +44,7 @@ public class workflowService {
 	}
 	
 
-	public workflowDoc getJson(String doc,MultipartFile file) throws IOException {
+	public workflowDoc getJson(String doc) throws IOException {
        
 			workflowDoc docJson=new workflowDoc();
 		
@@ -56,95 +56,13 @@ public class workflowService {
 				System.out.printf("error",err.toString());
 			}
 			
-			File f=convert(file);
-			String path=f.getAbsolutePath();
-			docJson.setPath(path);
-			String name = StringUtils.cleanPath(file.getOriginalFilename());
-			docJson.setFormat(file.getContentType());
-			docJson.setName(name);
-			docJson.setData(file.getBytes());
-			
-			docJson.setSize(FileUtils.byteCountToDisplaySize((long) file.getBytes().length));
-			DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-			Calendar cal = Calendar.getInstance();
-			docJson.setCreationDate(dateFormat.format(cal.getTime()));
 			
 			repo.save(docJson);  
 			return docJson;    
     }
 	
-	 public File convert(MultipartFile file) throws IOException
-	 {    
-	   File convFile = new File(file.getOriginalFilename());
-	   convFile.createNewFile(); 
-	   FileOutputStream fos = new FileOutputStream(convFile); 
-	   fos.write(file.getBytes());
-	   fos.close(); 
-	   return convFile;
-	 }
-	 
-	 
-	 public workflowDoc Filldata(workflowDoc doc,MultipartFile file) {
-		 File f = null;
-			try {
-				f = convert(file);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			   String path=f.getAbsolutePath();
-			   doc.setPath(path);
-				String name = StringUtils.cleanPath(file.getOriginalFilename());
-				doc.setFormat(file.getContentType());
-				doc.setName(name);
-				try {
-					doc.setData(file.getBytes());
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				try {
-					doc.setSize(FileUtils.byteCountToDisplaySize((long) file.getBytes().length));
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-				Calendar cal = Calendar.getInstance();
-				doc.setCreationDate(dateFormat.format(cal.getTime()));
-				return doc;
-	 }
-	 
-	 
-	 public workflowDoc FilldataWithoutFile(workflowDoc doc,MultipartFile file) {
-		 File f = null;
-			try {
-				f = convert(file);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			   String path=f.getAbsolutePath();
-			   doc.setPath(path);
-				String name = StringUtils.cleanPath(file.getOriginalFilename());
-				doc.setFormat(file.getContentType());
-				doc.setName(name);
-				try {
-					doc.setData(file.getBytes());
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				try {
-					doc.setSize(FileUtils.byteCountToDisplaySize((long) file.getBytes().length));
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-				Calendar cal = Calendar.getInstance();
-				doc.setCreationDate(dateFormat.format(cal.getTime()));
-				return doc;
-	 }
 	
+	 
+	 
+		
 }
