@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.EntityNotFoundException;
@@ -21,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.example.demo.data.dao.documentRepo;
 import com.example.demo.data.dao.documentValidationRepo;
 import com.example.demo.data.entity.document;
+import com.example.demo.data.entity.documentHistory;
 import com.example.demo.data.entity.documentValidation;
 import com.example.demo.data.entity.trackArray;
 import com.example.demo.data.entity.workflowData;
@@ -192,7 +194,7 @@ public class documentValidationController {
 		return new ResponseEntity<>(response.trackArray,statusCode);
 	}
 	
-	
+	//for validated and not validated
 	@RequestMapping(method=RequestMethod.PUT,value="/workflowarraytonull/{Id}"
 			,produces="application/json")
 	public ResponseEntity<Object> putWorkflowArrayToNull(@PathVariable Integer Id,
@@ -214,6 +216,30 @@ public class documentValidationController {
 		}
 		return new ResponseEntity<>(response.trackArray,statusCode);
 	}
+	
+	//for bloking the state
+	@RequestMapping(method=RequestMethod.PUT,value="/workflowarraytoBlocked/{Id}"
+			,produces="application/json")
+	public ResponseEntity<Object> putWorkflowArrayblockedState(@PathVariable Integer Id,
+			@RequestBody trackArray trk) {
+		HttpStatus statusCode = HttpStatus.OK;
+		documentValidation response=null;
+		try {
+			response=service.get(Id);
+			response.trackArray[trk.getIndex()]=2;
+			
+			service.save(response);
+		   } 
+		catch(EntityNotFoundException e) {
+				statusCode=HttpStatus.GONE;
+		} 
+		catch(Exception e) {
+				e.printStackTrace();
+				statusCode=HttpStatus.INTERNAL_SERVER_ERROR;
+		}
+		return new ResponseEntity<>(response.trackArray,statusCode);
+	}
+	
 	
 	@RequestMapping(method=RequestMethod.PUT,value="/AddComment/{Id}"
 			,produces="application/json")
@@ -249,7 +275,164 @@ public class documentValidationController {
 		}
 		return new ResponseEntity<>(response,statusCode);
 	}
+	
+	
+	
 
+
+	@RequestMapping(method=RequestMethod.GET,value="/listDocInvolved/{name0}"
+			,produces="application/json")
+	public ResponseEntity<Object> getListOfdoctoBeValidated(@PathVariable String name0
+			) {
+		HttpStatus statusCode = HttpStatus.OK;
+		List<documentValidation> response;
+		List<documentValidation> myList=new ArrayList<>();
+		List<String> myList0=new ArrayList<>();
+		String name= name0.replaceAll("\\s", "");
+		String msg1=null;
+		try {
+			response=service.listAll();
+			for(int i=0;i<response.size();i++) {
+				documentValidation dc=response.get(i);
+				if(dc.getTrackArray() == null) {
+				if(dc.Level1 != null ) {
+					if(dc.Level1.equals(name) ) {
+						myList.add(dc);
+						msg1=dc.getUserName() +"is waiting for you to validate the "
+					+ dc.getName() +" at level number 1" ;
+						myList0.add(msg1);
+					}
+			}
+				}
+				if(dc.Level1 != null && dc.getTrackArray() != null ) {
+						if(dc.Level1.equals(name) && dc.getTrackArray()[1] ==0) {
+							myList.add(dc);
+							msg1=dc.getUserName() +"is waiting for you to validate the "
+						+ dc.getName() +" at level number 1" ;
+							myList0.add(msg1);
+						}
+				}
+				if(dc.Level2 != null) {
+					if(dc.getHierarchy().equals("true")) {
+						if(dc.Level2.equals(name) && dc.getTrackArray()[2] ==0 && dc.getTrackArray()[1] ==1) {
+							myList.add(dc);
+							msg1=dc.getUserName() +"is waiting for you to validate the "
+									+ dc.getName() +" at level number 2" ;
+										myList0.add(msg1);
+						}
+						
+					}
+					if(dc.getHierarchy().equals("false")) {
+						if(dc.Level2.equals(name) && dc.getTrackArray() ==null) {
+							myList.add(dc);
+							msg1=dc.getUserName() +"is waiting for you to validate the "
+									+ dc.getName() +" at level number 2" ;
+										myList0.add(msg1);
+						}
+						if(dc.getTrackArray() !=null) {
+						if(dc.Level2.equals(name) && dc.getTrackArray()[2] ==0) {
+							myList.add(dc);
+							msg1=dc.getUserName() +"is waiting for you to validate the "
+									+ dc.getName() +" at level number 2" ;
+										myList0.add(msg1);
+						}
+						}
+						
+					}
+				}
+				if(dc.Level3 != null) {
+					if(dc.getHierarchy().equals("true")) {
+						if(dc.Level3.equals(name) && dc.getTrackArray()[3] ==0 && dc.getTrackArray()[1] ==1 && dc.getTrackArray()[2] ==1) {
+							myList.add(dc);
+							msg1=dc.getUserName() +"is waiting for you to validate the "
+									+ dc.getName() +" at level number 3" ;
+										myList0.add(msg1);
+						}
+					}
+					if(dc.getHierarchy().equals("false")) {
+						if(dc.Level3.equals(name) && dc.getTrackArray() ==null) {
+							myList.add(dc);
+							msg1=dc.getUserName() +"is waiting for you to validate the "
+									+ dc.getName() +" at level number 3" ;
+										myList0.add(msg1);
+						}
+						if(dc.getTrackArray() !=null) {
+						if(dc.Level3.equals(name) && dc.getTrackArray()[3] ==0 ) {
+							myList.add(dc);
+							msg1=dc.getUserName() +"is waiting for you to validate the "
+									+ dc.getName() +" at level number 3" ;
+										myList0.add(msg1);
+						}
+						
+					}}
+				}
+
+				if(dc.Level4 != null) {
+					if(dc.getHierarchy().equals("true")) {
+						if(dc.Level4.equals(name) && dc.getTrackArray()[4] ==0 && dc.getTrackArray()[3] ==1 && dc.getTrackArray()[2] ==1&& dc.getTrackArray()[1] ==1) {
+							myList.add(dc);
+							msg1=dc.getUserName() +"is waiting for you to validate the "
+									+ dc.getName() +" at level number 4" ;
+										myList0.add(msg1);
+						}
+					}
+					if(dc.getHierarchy().equals("false")) {
+						if(dc.Level4.equals(name) && dc.getTrackArray() ==null) {
+							myList.add(dc);
+							msg1=dc.getUserName() +"is waiting for you to validate the "
+									+ dc.getName() +" at level number 4" ;
+										myList0.add(msg1);
+						}
+						if(dc.getTrackArray() !=null) {
+						if(dc.Level4.equals(name) && dc.getTrackArray()[4] ==0) {
+							myList.add(dc);
+							msg1=dc.getUserName() +"is waiting for you to validate the "
+									+ dc.getName() +" at level number 3" ;
+										myList0.add(msg1);
+						}
+						}
+					}
+				}
+				if(dc.Level5 != null) {
+					if(dc.getHierarchy().equals("true")) {
+						if(dc.Level5.equals(name) && dc.getTrackArray()[5] ==0 && dc.getTrackArray()[4] ==1 && dc.getTrackArray()[3] ==1 && dc.getTrackArray()[2] ==1 && dc.getTrackArray()[1] ==1) {
+							myList.add(dc);
+							msg1=dc.getUserName() +"is waiting for you to validate the "
+									+ dc.getName() +" at level number 5" ;
+										myList0.add(msg1);
+						}
+					}
+					if(dc.getHierarchy().equals("false")) {
+						if(dc.Level5.equals(name) && dc.getTrackArray() ==null) {
+							myList.add(dc);
+							msg1=dc.getUserName() +"is waiting for you to validate the "
+									+ dc.getName() +" at level number 5" ;
+										myList0.add(msg1);
+						}
+						if(dc.getTrackArray() !=null) {
+						if(dc.Level5.equals(name) && dc.getTrackArray()[5] ==0) {
+							myList.add(dc);
+							msg1=dc.getUserName() +"is waiting for you to validate the "
+									+ dc.getName() +" at level number 3" ;
+										myList0.add(msg1);
+						}
+						
+					}}
+				}
+				
+			}
+		   } 
+		catch(EntityNotFoundException e) {
+				statusCode=HttpStatus.GONE;
+		} 
+		catch(Exception e) {
+				e.printStackTrace();
+				statusCode=HttpStatus.INTERNAL_SERVER_ERROR;
+		}
+		return new ResponseEntity<>(myList0,statusCode);
+	}
+
+	
 	
 
 }
