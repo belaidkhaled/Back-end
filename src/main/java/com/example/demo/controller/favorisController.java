@@ -23,6 +23,7 @@ import com.example.demo.data.dao.favorisRepo;
 import com.example.demo.data.entity.Favoris;
 import com.example.demo.data.entity.Folder;
 import com.example.demo.data.entity.document;
+import com.example.demo.data.entity.documentValidation;
 import com.example.demo.service.documentService;
 import com.example.demo.service.favorisService;
 
@@ -186,4 +187,61 @@ public class favorisController {
 			}
 			return new ResponseEntity<>(myList,statusCode);
 		}
+		
+		
+		//get favorites numbers for this user
+				@RequestMapping(value="/favoritesnumber/{user}",produces = "application/json",
+						method =  RequestMethod.GET)
+				   public ResponseEntity<Object>getAlldocsInworkflow(@PathVariable String user) {
+					HttpStatus statusCode = HttpStatus.OK;
+					boolean r=false;
+					List<Favoris> myList = new ArrayList<>();
+					List<Favoris> response=null;
+					boolean resp = false;
+					String p;
+					String k;
+					k=user.replaceAll("\\s", "");
+					int[] arr=new int[5] ;
+					int i1=0;
+					try {
+						response=service.listAll();
+					
+						  for(int i=0;i<response.size();i++) {
+							   Favoris dc=response.get(i);
+							   if (dc.getUserName().replaceAll("\\s", "").equals(k)) {
+								   i1++;
+							   }
+							   
+						  }
+						  
+					}
+					catch(EntityNotFoundException e) {
+						statusCode=HttpStatus.GONE;
+					}
+					catch(Exception e) {
+						e.printStackTrace();
+						statusCode=HttpStatus.INTERNAL_SERVER_ERROR;
+					}
+					return new ResponseEntity<>(i1,statusCode);
+				    
+				  }
+				
+				//delete favorites controller
+				@RequestMapping(value="/documentsfavorites/{Id}",produces = "application/json",
+						method =  RequestMethod.DELETE)
+				   public ResponseEntity<Object>deleteDocumentInfavorites(@PathVariable Integer Id) {
+					HttpStatus statusCode = HttpStatus.OK;
+					boolean response = false;
+					try {
+						 service.delete(Id);
+					}
+					catch(EntityNotFoundException e) {
+						statusCode=HttpStatus.GONE;
+					}
+					catch(Exception e) {
+						e.printStackTrace();
+						statusCode=HttpStatus.INTERNAL_SERVER_ERROR;
+					}
+					return new ResponseEntity<>(response,statusCode);
+				  }
 }

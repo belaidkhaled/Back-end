@@ -42,6 +42,7 @@ import com.example.demo.data.entity.Favoris;
 import com.example.demo.data.entity.Folder;
 import com.example.demo.data.entity.document;
 import com.example.demo.data.entity.documentHistory;
+import com.example.demo.data.entity.documentValidation;
 import com.example.demo.service.documentHistoryService;
 import com.example.demo.service.documentService;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -107,11 +108,23 @@ public class documentController  {
         String val="pdf";
         String format=null;
         String val1="xlsx";
+        String val2="docx";
+        String val3="pptx";
+        String val4="txt";
         if(path.contains(val)) {
         	format="pdf";
         }
         if(path.contains(val1)) {
         	format="xlsx";
+        }
+        if(path.contains(val2)) {
+        	format="docx";
+        }
+        if(path.contains(val3)) {
+        	format="pptx";
+        }
+        if(path.contains(val4)) {
+        	format="txt";
         }
         InputStreamResource resource = new InputStreamResource(new ByteArrayInputStream(bytes));
         HttpHeaders headers = new HttpHeaders();
@@ -184,6 +197,7 @@ public class documentController  {
 		boolean tr = false;
 	    try {
 		response=historyService.listAll();
+		
 		for(int i=0;i<response.size();i++) {
 			documentHistory dc=response.get(i);
 			p=dc.getOriginalId();
@@ -196,6 +210,8 @@ public class documentController  {
 				k=myList.get(j).getVersion();
 					}
 				}
+			if(file != null) {
+				
 			
 			if( k==0) {
 						documentHistory dh=new documentHistory();
@@ -231,6 +247,7 @@ public class documentController  {
 						dh.setUserName(resp.getUserName());
 						dhrepo.save(dh); 
 					}
+			}
 		     repo.findById(Id)
 		           .map(document -> {
 		        	document docJson=new document();
@@ -257,17 +274,22 @@ public class documentController  {
 		           if(docJson.getName() != null) {
 		        	   document.setName(docJson.getName());
 		           }
-		           if (file.isEmpty()) {
+		           if (file == null) {
 		        	   document d= service.FilldataWithoutFile(document);
 			           repo.save(d); 
 			           return repo.save(d);
 		           }
-		           document d= service.Filldata(document, file);
-		           repo.save(d);  
-		           return repo.save(d);
+		           if(file != null ) {
+		        	   document d= service.Filldata(document, file);
+			           repo.save(d);  
+			           return repo.save(d);
+		           }
+		        return repo.save(document);
 		           });
-			}
 			
+	
+		}
+	    
 			 catch(EntityNotFoundException e) {
 				 statusCode=HttpStatus.GONE;
 			 }
@@ -414,6 +436,55 @@ public class documentController  {
 		return new ResponseEntity<>(myList,statusCode);
 	}
 	
+	@RequestMapping(method=RequestMethod.GET,value="/stats"
+			,produces = "application/json")
+	public ResponseEntity<Object> getStats() {
+		HttpStatus statusCode = HttpStatus.OK;
+		List<document> response=null;
+		try {
+		  response=service.listAll();
+		} catch(EntityNotFoundException e) {
+			statusCode=HttpStatus.GONE;
+		} catch(Exception e) {
+			e.printStackTrace();
+			statusCode=HttpStatus.INTERNAL_SERVER_ERROR;
+		}
+		return new ResponseEntity<>(response,statusCode);
+	}
+	
+	@RequestMapping(method=RequestMethod.GET,value="/checkDocumentExistOrNot/{data}"
+			,produces = "application/json")
+	public ResponseEntity<Object> checkDocumentExistOrNot(@PathVariable String data) {
+		HttpStatus statusCode = HttpStatus.OK;
+		boolean r=false;
+		String[] parts = data.split("-");
+		String nameUser = parts[0];
+		String nameDocument = parts[1];
+		List<document> response=null;
+		List<document> myList=new ArrayList<>();
+		String p;
+		String k;
+		try {
+		  response = service.listAll();
+		  
+		  for(int i=0;i<response.size();i++) {
+			  document dc=response.get(i);
+			  p=dc.getName().replaceAll("\\s", "");
+			  k=dc.getUserName().replaceAll("\\s+$", "");
+			  if(p.equals(nameDocument.replaceAll("\\s", "")) && k.equals(nameUser.replaceAll("\\s+$", "")) 
+				&& !(dc instanceof documentValidation) && !(dc instanceof documentHistory )
+				&& !(dc instanceof Favoris) 	  ) {
+				  r=true;
+			  }
+		  }
+		} catch(EntityNotFoundException e) {
+			statusCode=HttpStatus.GONE;
+		} catch(Exception e) {
+			e.printStackTrace();
+			statusCode=HttpStatus.INTERNAL_SERVER_ERROR;
+		}
+		return new ResponseEntity<>(r,statusCode);
+	}	
 	
 	
 	

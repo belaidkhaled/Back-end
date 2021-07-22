@@ -225,7 +225,12 @@ public class documentValidationController {
 		HttpStatus statusCode = HttpStatus.OK;
 		documentValidation response=null;
 		try {
+			
 			response=service.get(Id);
+			if(response.trackArray==null) {
+				int[] myIntArray = new int[7];
+				response.trackArray=myIntArray;
+			}
 			response.trackArray[trk.getIndex()]=2;
 			
 			service.save(response);
@@ -288,33 +293,28 @@ public class documentValidationController {
 		List<documentValidation> response;
 		List<documentValidation> myList=new ArrayList<>();
 		List<String> myList0=new ArrayList<>();
-		String name= name0.replaceAll("\\s", "");
+		String name= name0.replaceAll("\\s+$", "");
 		String msg1=null;
 		try {
 			response=service.listAll();
 			for(int i=0;i<response.size();i++) {
 				documentValidation dc=response.get(i);
 				if(dc.getTrackArray() == null) {
+					dc.setTrackArray(new int[6]);
+				}
 				if(dc.Level1 != null ) {
-					if(dc.Level1.equals(name) ) {
+					if(dc.Level1.replaceAll("\\s+$", "").equals(name) && dc.getTrackArray()[1] ==0 ) {
 						myList.add(dc);
 						msg1=dc.getUserName() +"is waiting for you to validate the "
 					+ dc.getName() +" at level number 1" ;
 						myList0.add(msg1);
 					}
-			}
+			
 				}
-				if(dc.Level1 != null && dc.getTrackArray() != null ) {
-						if(dc.Level1.equals(name) && dc.getTrackArray()[1] ==0) {
-							myList.add(dc);
-							msg1=dc.getUserName() +"is waiting for you to validate the "
-						+ dc.getName() +" at level number 1" ;
-							myList0.add(msg1);
-						}
-				}
+				
 				if(dc.Level2 != null) {
 					if(dc.getHierarchy().equals("true")) {
-						if(dc.Level2.equals(name) && dc.getTrackArray()[2] ==0 && dc.getTrackArray()[1] ==1) {
+						if(dc.Level2.replaceAll("\\s+$", "").equals(name) && dc.getTrackArray()[2] ==0 && dc.getTrackArray()[1] ==1) {
 							myList.add(dc);
 							msg1=dc.getUserName() +"is waiting for you to validate the "
 									+ dc.getName() +" at level number 2" ;
@@ -323,14 +323,14 @@ public class documentValidationController {
 						
 					}
 					if(dc.getHierarchy().equals("false")) {
-						if(dc.Level2.equals(name) && dc.getTrackArray() ==null) {
+						if(dc.Level2.replaceAll("\\s+$", "").equals(name) && dc.getTrackArray() ==null) {
 							myList.add(dc);
 							msg1=dc.getUserName() +"is waiting for you to validate the "
 									+ dc.getName() +" at level number 2" ;
 										myList0.add(msg1);
 						}
 						if(dc.getTrackArray() !=null) {
-						if(dc.Level2.equals(name) && dc.getTrackArray()[2] ==0) {
+						if(dc.Level2.replaceAll("\\s+$", "").equals(name) && dc.getTrackArray()[2] ==0) {
 							myList.add(dc);
 							msg1=dc.getUserName() +"is waiting for you to validate the "
 									+ dc.getName() +" at level number 2" ;
@@ -342,7 +342,7 @@ public class documentValidationController {
 				}
 				if(dc.Level3 != null) {
 					if(dc.getHierarchy().equals("true")) {
-						if(dc.Level3.equals(name) && dc.getTrackArray()[3] ==0 && dc.getTrackArray()[1] ==1 && dc.getTrackArray()[2] ==1) {
+						if(dc.Level3.replaceAll("\\s+$", "").equals(name) && dc.getTrackArray()[3] ==0 && dc.getTrackArray()[1] ==1 && dc.getTrackArray()[2] ==1) {
 							myList.add(dc);
 							msg1=dc.getUserName() +"is waiting for you to validate the "
 									+ dc.getName() +" at level number 3" ;
@@ -350,14 +350,14 @@ public class documentValidationController {
 						}
 					}
 					if(dc.getHierarchy().equals("false")) {
-						if(dc.Level3.equals(name) && dc.getTrackArray() ==null) {
+						if(dc.Level3.replaceAll("\\s+$", "").equals(name) && dc.getTrackArray() ==null) {
 							myList.add(dc);
 							msg1=dc.getUserName() +"is waiting for you to validate the "
 									+ dc.getName() +" at level number 3" ;
 										myList0.add(msg1);
 						}
 						if(dc.getTrackArray() !=null) {
-						if(dc.Level3.equals(name) && dc.getTrackArray()[3] ==0 ) {
+						if(dc.Level3.replaceAll("\\s+$", "").equals(name) && dc.getTrackArray()[3] ==0 ) {
 							myList.add(dc);
 							msg1=dc.getUserName() +"is waiting for you to validate the "
 									+ dc.getName() +" at level number 3" ;
@@ -369,7 +369,7 @@ public class documentValidationController {
 
 				if(dc.Level4 != null) {
 					if(dc.getHierarchy().equals("true")) {
-						if(dc.Level4.equals(name) && dc.getTrackArray()[4] ==0 && dc.getTrackArray()[3] ==1 && dc.getTrackArray()[2] ==1&& dc.getTrackArray()[1] ==1) {
+						if(dc.Level4.replaceAll("\\s+$", "").equals(name) && dc.getTrackArray()[4] ==0 && dc.getTrackArray()[3] ==1 && dc.getTrackArray()[2] ==1&& dc.getTrackArray()[1] ==1) {
 							myList.add(dc);
 							msg1=dc.getUserName() +"is waiting for you to validate the "
 									+ dc.getName() +" at level number 4" ;
@@ -377,14 +377,14 @@ public class documentValidationController {
 						}
 					}
 					if(dc.getHierarchy().equals("false")) {
-						if(dc.Level4.equals(name) && dc.getTrackArray() ==null) {
+						if(dc.Level4.replaceAll("\\s+$", "").equals(name) && dc.getTrackArray() ==null) {
 							myList.add(dc);
 							msg1=dc.getUserName() +"is waiting for you to validate the "
 									+ dc.getName() +" at level number 4" ;
 										myList0.add(msg1);
 						}
 						if(dc.getTrackArray() !=null) {
-						if(dc.Level4.equals(name) && dc.getTrackArray()[4] ==0) {
+						if(dc.Level4.replaceAll("\\s+$", "").equals(name) && dc.getTrackArray()[4] ==0) {
 							myList.add(dc);
 							msg1=dc.getUserName() +"is waiting for you to validate the "
 									+ dc.getName() +" at level number 3" ;
@@ -395,7 +395,7 @@ public class documentValidationController {
 				}
 				if(dc.Level5 != null) {
 					if(dc.getHierarchy().equals("true")) {
-						if(dc.Level5.equals(name) && dc.getTrackArray()[5] ==0 && dc.getTrackArray()[4] ==1 && dc.getTrackArray()[3] ==1 && dc.getTrackArray()[2] ==1 && dc.getTrackArray()[1] ==1) {
+						if(dc.Level5.replaceAll("\\s+$", "").equals(name) && dc.getTrackArray()[5] ==0 && dc.getTrackArray()[4] ==1 && dc.getTrackArray()[3] ==1 && dc.getTrackArray()[2] ==1 && dc.getTrackArray()[1] ==1) {
 							myList.add(dc);
 							msg1=dc.getUserName() +"is waiting for you to validate the "
 									+ dc.getName() +" at level number 5" ;
@@ -403,14 +403,14 @@ public class documentValidationController {
 						}
 					}
 					if(dc.getHierarchy().equals("false")) {
-						if(dc.Level5.equals(name) && dc.getTrackArray() ==null) {
+						if(dc.Level5.replaceAll("\\s+$", "").equals(name) && dc.getTrackArray() ==null) {
 							myList.add(dc);
 							msg1=dc.getUserName() +"is waiting for you to validate the "
 									+ dc.getName() +" at level number 5" ;
 										myList0.add(msg1);
 						}
 						if(dc.getTrackArray() !=null) {
-						if(dc.Level5.equals(name) && dc.getTrackArray()[5] ==0) {
+						if(dc.Level5.replaceAll("\\s+$", "").equals(name) && dc.getTrackArray()[5] ==0) {
 							myList.add(dc);
 							msg1=dc.getUserName() +"is waiting for you to validate the "
 									+ dc.getName() +" at level number 3" ;

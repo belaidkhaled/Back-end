@@ -84,7 +84,7 @@ public class userController {
 		  response = service.listAll();
 		  for(int i=0;i<response.size();i++) {
 			  tr=response.get(i).UTCTNOM;
-			  tr1=tr.replaceAll("\\s", "");
+			  tr1=tr.replaceAll("\\s+$", "");
 			  tr2=response.get(i).UTCTSUPER;
 			  myList0.add(tr1);  
 			  myList1.add(tr2);
